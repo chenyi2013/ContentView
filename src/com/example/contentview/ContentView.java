@@ -99,6 +99,21 @@ public class ContentView extends View {
 			int len = getFontWidth(mTextSize, mData[i])
 					+ getFontWidth(mTextSize, mSeparate) + mCurrentLength;
 			if (len > width) {
+				// ======================================================
+
+				for (int j = i + 1; j < mData.length; j++) {
+					int le = mCurrentLength + getFontWidth(mTextSize, mData[j])
+							+ getFontWidth(mTextSize, mSeparate);
+					if (le < width) {
+						String old = mData[i];
+						mData[i] = mData[j];
+						mData[j] = old;
+						mBuffer.append(mData[i]).append(mSeparate);
+						continue;
+					}
+
+				}
+				// ======================================================
 				int height = getFontHeight(mTextSize, mBuffer.toString());
 				mTotalHeight = mTotalHeight + height + sepatateHeight;
 				texts.add(new Text(0, mTotalHeight, mBuffer.toString()));
