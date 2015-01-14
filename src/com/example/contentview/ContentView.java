@@ -13,9 +13,7 @@ import android.view.View;
 
 public class ContentView extends View {
 
-	private String[] mData = new String[] { "中国人", "我是中国人大中中中", "中呻吟中中",
-			"砝码品吕", "中国人", "我是中国人大中中中", "中呻吟中中", "砝码品吕", "中国人", "我是中国人大中中中",
-			"中呻吟中中", "砝码品吕", "中国人", "我是中国人大中中中", "中呻吟中中", "砝码品吕" };
+	private String[] mData;
 	private String mSeparate = "    ";
 	private Paint mPaint;
 	private int sepatateHeight = 10;
@@ -45,6 +43,10 @@ public class ContentView extends View {
 		return mTextSize;
 	}
 
+	public void setData(String[] str) {
+		mData = str;
+	}
+
 	public void setTextSize(int mTextSize) {
 		this.mTextSize = mTextSize;
 		requestLayout();
@@ -59,7 +61,7 @@ public class ContentView extends View {
 	}
 
 	/**
-	 * 得到字体高度
+	 * 锟矫碉拷锟斤拷锟斤拷叨锟?
 	 * 
 	 * @param fontSize
 	 * @return
@@ -74,7 +76,7 @@ public class ContentView extends View {
 	}
 
 	/**
-	 * 得到字体宽度
+	 * 锟矫碉拷锟斤拷锟斤拷锟斤拷
 	 * 
 	 * @return
 	 */
@@ -88,7 +90,11 @@ public class ContentView extends View {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		int width = MeasureSpec.getSize(widthMeasureSpec);
-		int index = -1;
+		if (mData == null) {
+			setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec),
+					MeasureSpec.getSize(heightMeasureSpec));
+			return;
+		}
 		texts.clear();
 		mCurrentLength = 0;
 		mTotalHeight = 0;
@@ -99,7 +105,6 @@ public class ContentView extends View {
 			int len = getFontWidth(mTextSize, mData[i])
 					+ getFontWidth(mTextSize, mSeparate) + mCurrentLength;
 			if (len > width) {
-				// ======================================================
 
 				for (int j = i + 1; j < mData.length; j++) {
 					int le = mCurrentLength + getFontWidth(mTextSize, mData[j])
@@ -109,11 +114,10 @@ public class ContentView extends View {
 						mData[i] = mData[j];
 						mData[j] = old;
 						mBuffer.append(mData[i]).append(mSeparate);
-						continue;
+						break;
 					}
 
 				}
-				// ======================================================
 				int height = getFontHeight(mTextSize, mBuffer.toString());
 				mTotalHeight = mTotalHeight + height + sepatateHeight;
 				texts.add(new Text(0, mTotalHeight, mBuffer.toString()));
@@ -121,7 +125,6 @@ public class ContentView extends View {
 						+ getFontWidth(mTextSize, mSeparate);
 				mBuffer.setLength(0);
 				mBuffer.append(mData[i]).append(mSeparate);
-				index = i;
 			} else {
 				mBuffer.append(mData[i]).append(mSeparate);
 				if (len == width) {
@@ -130,23 +133,16 @@ public class ContentView extends View {
 					texts.add(new Text(0, mTotalHeight, mBuffer.toString()));
 					mCurrentLength = 0;
 					mBuffer.setLength(0);
-					index = i;
 				}
 				mCurrentLength = len;
 			}
 
 		}
-		if (index > 0 && index < mData.length - 1) {
 
-			mBuffer.setLength(0);
-			for (int i = index; i < mData.length; i++) {
-				mBuffer.append(mData[i]).append(mSeparate);
-			}
-			int height = getFontHeight(mTextSize, mBuffer.toString());
-			mTotalHeight = mTotalHeight + height + sepatateHeight;
-			texts.add(new Text(width, mTotalHeight, mBuffer.toString()));
+		int height = getFontHeight(mTextSize, mBuffer.toString());
+		mTotalHeight = mTotalHeight + height + sepatateHeight;
+		texts.add(new Text(width, mTotalHeight, mBuffer.toString()));
 
-		}
 		setMeasuredDimension(width, mTotalHeight + 10);
 	}
 
@@ -170,6 +166,5 @@ public class ContentView extends View {
 			this.height = height;
 			this.text = text;
 		}
-
 	}
 }
